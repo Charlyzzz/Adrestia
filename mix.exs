@@ -1,8 +1,8 @@
-defmodule Anubis.Mixfile do
+defmodule Adrestia.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :anubis,
+    [app: :adrestia,
      version: "0.1.0",
      elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
@@ -16,7 +16,7 @@ defmodule Anubis.Mixfile do
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
     [extra_applications: [:logger],
-     mod: {Anubis, []}]
+     mod: {Adrestia, []}]
   end
 
   # Dependencies can be Hex packages:
@@ -29,7 +29,9 @@ defmodule Anubis.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:cowboy, "~> 1.0.0"},
-     {:plug, "~> 1.0"}]
+    [{:cachex, "~> 2.1"},
+     {:cowboy, "~> 1.0.0"},
+     {:plug, "~> 1.0"},
+     {:httpotion, "~> 3.0.2"}]
   end
 end

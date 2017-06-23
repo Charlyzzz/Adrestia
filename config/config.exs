@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure for your application as:
 #
-#     config :anubis, key: :value
+#     config :adrestia, key: :value
 #
 # And access this configuration in your application as:
 #
-#     Application.get_env(:anubis, :key)
+#     Application.get_env(:adrestia, :key)
 #
 # Or configure a 3rd-party app:
 #
@@ -28,5 +28,9 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
-config :anubis,
-  port: 1234
+config :adrestia,
+  port: 1234,
+  endpoints: [{"server1", "localhost:4567"}, {"server2", "localhost:5678"}],
+  strategy: Adrestia.Strategy.RoundRobin
+
+
