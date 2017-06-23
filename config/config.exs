@@ -30,7 +30,6 @@ use Mix.Config
 #     import_config "#{Mix.env}.exs"
 config :adrestia,
   port: 1234,
-  endpoints: [{"server1", "localhost:4567"}, {"server2", "localhost:5678"}],
-  strategy: Adrestia.Strategy.RoundRobin
+  endpoints: Adrestia.RoundRobin.upstream({"server1", "localhost:4567"}, {"server2", "localhost:5678"})
 
 
