@@ -15,7 +15,7 @@ defmodule Adrestia do
 
     children = [
       worker(strategy_module, [endpoints]),
-      worker(Cachex, [Tyr.Cache, [default_ttl: 5000], []]),
+      worker(Cachex, [Adrestia.Cache, [default_ttl: 5000], []]),
       Plug.Adapters.Cowboy.child_spec(:http, Adrestia.Endpoint, strategy_module, port: port)
     ]
 
