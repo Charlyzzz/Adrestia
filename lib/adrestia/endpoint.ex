@@ -1,36 +1,77 @@
 defmodule Adrestia.Endpoint do
+  use Plug.Builder
+
+  alias Adrestia.{Cache, Request}
+
   import Plug.Conn
 
-  def init(strategy), do: strategy
-
-  def call(conn, strategy) do
-    url = path(conn, strategy)    
-    _headers = conn.req_headers
-    
-    verb = conn.method |> String.downcase |> String.to_atom
-    
-    response = HTTPotion.request(verb, url, ibrowse: [max_sessions: 100, max_pipeline_size: 1])
-    
+  def call(conn, _) do
     conn
-      |> put_resp_headers(response.headers)
-      |> send_resp(response.status_code, response.body)
+      |> Request.from_conn
+      |> pipeline
   end
 
-  defp put_resp_headers(conn, %{:hdrs => headers}) do
-    Map.put(conn, :resp_headers, Map.to_list(headers))
+  defp pipeline(request) do
+    request
+      |> Request.put_endpoint(server_address())
+      |> read_cache
+      |> read
+      |> check
+      |> write_cache
+      |> write
   end
 
-  defp path(conn, strategy) do
-    base = server_address(strategy) <> "/" <> Enum.join(conn.path_info, "/")
-    case conn.query_string do
-      "" -> base
-      qs -> base <> "?" <> qs
+  defp read_cache(%{:verb => :get} = request) do
+    {request, cache_get(request)}
+  end
+
+  defp read({request, nil}) do
+    Request.send(request)
+  end
+
+  defp read({request, cached_response}) do
+    Request.put_response(request, cached_response)
+  end
+
+  defp check(%{:response => %HTTPotion.ErrorResponse{}} = request) do
+    pipeline(request)
+  end
+
+  defp check(request), do: request
+
+  defp write_cache(%{:verb => :get} = request) do
+    cache_set(request)
+  end
+
+  defp write_cache(req), do: req
+
+  defp write(%Request{} = request) do 
+    request.conn
+      |> put_resp_headers(request.headers)
+      |> send_resp(request.status_code, request.body)
+  end
+
+  defp write(conn), do: conn
+
+  defp put_resp_headers(conn, headers) do
+    reducer = fn({header_key, value}, connection) -> 
+      put_resp_header(connection, header_key, value)
     end
+    Enum.reduce(headers, conn, reducer)
   end
 
-  defp server_address(strategy) do
-    strategy
-      |> GenServer.call(:next_server)
-      |> elem(1)
+  defp server_address do
+    GenServer.call(balance_strategy(), :next_server)
+  end
+
+  defp balance_strategy, do: Application.get_env(Adrestia.app(), :strategy, Adrestia.RoundRobin)
+
+  defp cache_get(request) do
+    if request.cacheable?, do: Cache.get(request)
+  end 
+
+  defp cache_set(request) do
+    if request.cacheable?, do: Cache.set(request)
+    request
   end
 end

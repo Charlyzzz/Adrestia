@@ -7,7 +7,8 @@ defmodule Adrestia.Mixfile do
      elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps()]
+     deps: deps(),
+     aliases: aliases()]
   end
 
   # Configuration for the OTP application
@@ -16,6 +17,10 @@ defmodule Adrestia.Mixfile do
   def application do
     [extra_applications: [:logger],
      mod: {Adrestia, []}]
+  end
+
+  defp aliases() do
+    ["adrestia.balance": "run --no-halt"]
   end
 
   defp deps do

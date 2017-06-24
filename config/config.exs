@@ -1,5 +1,4 @@
-# This file is responsible for configuring your application
-# and its dependencies with the aid of the Mix.Config module.
+
 use Mix.Config
 
 # This configuration is loaded before any dependency and is restricted
@@ -30,6 +29,5 @@ use Mix.Config
 #     import_config "#{Mix.env}.exs"
 config :adrestia,
   port: 1234,
-  endpoints: Adrestia.RoundRobin.upstream({"server1", "localhost:4567"}, {"server2", "localhost:5678"})
-
-
+  endpoints: [{"server1", "localhost:4567"}, {"server2", "localhost:5678"}],
+  cache_ttl: 1_000

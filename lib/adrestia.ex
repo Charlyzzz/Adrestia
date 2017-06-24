@@ -2,23 +2,26 @@ defmodule Adrestia do
   use Application
   @moduledoc """
   Documentation for Adrestia.
+  
   """
 
-  def start(:normal, _) do    
-    port = Application.get_env(:adrestia, :port, 4000)
-    strategy_module = Application.get_env(:adrestia, :strategy, Adrestia.Strategy.RoundRobin)
-    endpoints = Application.fetch_env!(:adrestia, :endpoints)
+  def start(:normal, _) do             
+    port = Application.get_env(app(), :port, 4000)
+    ttl = Application.get_env(app(), :cache_ttl, 5000)
+    endpoints = Application.fetch_env!(app(), :endpoints)
+    balance_strategy = Application.get_env(app(), :strategy, Adrestia.RoundRobin)
 
     HTTPotion.start
 
-    import Supervisor.Spec
-
+    import Supervisor.Spec    
     children = [
-      worker(strategy_module, [endpoints]),
-      worker(Cachex, [Adrestia.Cache, [default_ttl: 5000], []]),
-      Plug.Adapters.Cowboy.child_spec(:http, Adrestia.Endpoint, strategy_module, port: port)
-    ]
-
+      worker(Cachex, [Adrestia.Cache, [default_ttl: ttl]]),
+      worker(balance_strategy, [endpoints]),
+      Plug.Adapters.Cowboy.child_spec(:http, Adrestia.Endpoint, [], port: port)
+    ] 
+    
     Supervisor.start_link(children, strategy: :one_for_one, name: Adrestia.Supervisor)
-  end    
+  end
+
+  def app, do: :adrestia
 end

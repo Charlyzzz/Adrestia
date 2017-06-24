@@ -1,8 +1,6 @@
 defmodule Adrestia.RoundRobin do
   use GenServer
 
-  defstruct [:servers]
-
   def start_link(endpoints) do
     GenServer.start_link(__MODULE__, endpoints, name: __MODULE__)
   end
