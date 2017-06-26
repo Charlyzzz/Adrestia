@@ -14,16 +14,19 @@ defmodule Adrestia.RoundRobin do
   end
 
   def handle_cast({:server_down, server}, {ups, downs}) do
-    IO.inspect {ups, downs}
     rest = List.delete(ups, server)
     {:noreply, {rest, as_set([ server | downs])}}
   end  
 
   def handle_cast({:server_up, server}, {ups, downs}) do
-    IO.inspect {ups, downs}
     rest = List.delete(downs, server)
     {:noreply, {as_set(ups ++ [server]), rest}}
   end  
 
+  def handle_cast(:status, state) do
+    IO.inspect state
+    {:noreply, state}
+  end
+  
   defp as_set(list), do: list |> MapSet.new |> MapSet.to_list
 end

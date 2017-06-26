@@ -4,6 +4,7 @@ defmodule Adrestia.ActiveCheck do
     Enum.each(endpoints,fn(endpoint) ->
       GenServer.cast(strategy, {server_status(endpoint), endpoint})
     end)
+    GenServer.cast(strategy, :status)
   end
 
   defp server_status({_, url}) do

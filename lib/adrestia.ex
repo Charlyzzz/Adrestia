@@ -8,7 +8,7 @@ defmodule Adrestia do
   def start(:normal, _) do             
     port = Application.get_env(app(), :port, 4000)
     ttl = Application.get_env(app(), :cache_ttl, 5000)
-    check_time = Application.get_env(app(), :active_check_time, 5)
+    check_time = Application.get_env(app(), :active_check_time, 3)
     endpoints = Application.fetch_env!(app(), :endpoints)
     balance_strategy = Application.get_env(app(), :strategy, Adrestia.RoundRobin)
 
