@@ -8,12 +8,16 @@ defmodule Adrestia.Endpoint do
   def call(conn, _) do
     conn
       |> Request.from_conn
-      |> pipeline
+      |> pipeline(server_address())
   end
 
-  defp pipeline(request) do
+  defp pipeline(request, :error) do
+    send_resp(request.conn, :service_unavailable, "There are no servers available")
+  end
+
+  defp pipeline(request, address) do
     request
-      |> Request.put_endpoint(server_address())
+      |> Request.put_endpoint(address)
       |> read_cache
       |> read
       |> check
@@ -34,7 +38,8 @@ defmodule Adrestia.Endpoint do
   end
 
   defp check(%{:response => %HTTPotion.ErrorResponse{}} = request) do
-    pipeline(request)
+    report_server_down(request.endpoint)
+    pipeline(request, server_address())
   end
 
   defp check(request), do: request
@@ -52,6 +57,10 @@ defmodule Adrestia.Endpoint do
   end
 
   defp write(conn), do: conn
+
+  defp report_server_down(server) do 
+    GenServer.cast(balance_strategy(), {:server_down, server})
+  end
 
   defp put_resp_headers(conn, headers) do
     reducer = fn({header_key, value}, connection) -> 
