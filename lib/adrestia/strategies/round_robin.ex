@@ -2,7 +2,7 @@ defmodule Adrestia.RoundRobin do
   use GenServer
 
   def start_link(endpoints) do
-    GenServer.start_link(__MODULE__, {endpoints,[]}, name: __MODULE__)
+    GenServer.start_link(__MODULE__, {endpoints, []}, name: __MODULE__)
   end
 
   def handle_call(:next_server, _from, {[], _} = state) do
@@ -14,14 +14,16 @@ defmodule Adrestia.RoundRobin do
   end
 
   def handle_cast({:server_down, server}, {ups, downs}) do
-    IO.puts "down"
+    IO.inspect {ups, downs}
     rest = List.delete(ups, server)
-    {:noreply, {rest, [ server | downs]}}
+    {:noreply, {rest, as_set([ server | downs])}}
   end  
 
   def handle_cast({:server_up, server}, {ups, downs}) do
-    IO.puts "up"
+    IO.inspect {ups, downs}
     rest = List.delete(downs, server)
-    {:noreply, {ups ++ [server], rest}}
+    {:noreply, {as_set(ups ++ [server]), rest}}
   end  
+
+  defp as_set(list), do: list |> MapSet.new |> MapSet.to_list
 end
