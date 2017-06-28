@@ -30,4 +30,5 @@ use Mix.Config
 config :adrestia,
   port: 1234,
   endpoints: [{"server1", "localhost:4567"}, {"server2", "localhost:5678"}],
-  cache_ttl: 1_000
+  cache_ttl: 1_000,
+  strategy: Adrestia.RoundRobin
