@@ -31,4 +31,4 @@ config :adrestia,
   port: 1234,
   endpoints: [%{ name: "server1", host: "localhost:4567", weight: 3}, %{name: "server2", host: "localhost:5678"}],
   cache_ttl: 1_000,
-  strategy: Adrestia.Random
+  strategy: Adrestia.Weight
