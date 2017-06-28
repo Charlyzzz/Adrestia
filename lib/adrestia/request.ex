@@ -1,12 +1,12 @@
 defmodule Adrestia.Request do
   alias Adrestia.Cache
 
-  defstruct [:verb, :conn, :path, 
-             :query_string, :response, 
-             :endpoint, :headers, :status_code, 
+  defstruct [:verb, :conn, :path,
+             :query_string, :response,
+             :endpoint, :headers, :status_code,
              :cacheable?, :body]
 
-  def from_conn(conn) do    
+  def from_conn(conn) do
     %Adrestia.Request{verb: verb(conn)}
       |> Map.put(:conn, conn)
       |> Map.put(:path, path(conn))
@@ -31,9 +31,8 @@ defmodule Adrestia.Request do
   end
 
   def send(request) do
-    {_, endpoint} = request.endpoint
-    url = endpoint <> "/" <> request.path <> request.query_string
-    response = HTTPotion.request(request.verb, url)    
+    url = request.endpoint.host <> "/" <> request.path <> request.query_string
+    response = HTTPotion.request(request.verb, url)
     put_response(request, response)
   end
 
