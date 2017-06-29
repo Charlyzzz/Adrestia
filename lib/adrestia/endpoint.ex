@@ -58,8 +58,8 @@ defmodule Adrestia.Endpoint do
 
   defp write(conn), do: conn
 
-  defp report_server_down(server) do 
-    GenServer.cast(balance_strategy(), {:server_down, server})
+  defp report_server_down(server) do
+    GenServer.cast(Adrestia.Balancer, {:server_down, server})
   end
 
   defp put_resp_headers(conn, headers) do

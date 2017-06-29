@@ -5,14 +5,14 @@ defmodule Adrestia.Balancer do
     GenServer.start_link(__MODULE__, {endpoints, [], strategy}, name: __MODULE__)
   end
 
-  def init({endpoints, strategy}) do
+  def init({endpoints, _, strategy}) do
     servers = Enum.map(endpoints, fn(server) ->
       weight = Map.get(server, :weight, 1)
       server
         |> Map.put(:weight, weight)
         |> Map.put(:remaining_weight, weight)
     end)
-    {:ok, {servers, strategy}}
+    {:ok, {servers, [], strategy}}
   end
 
   def handle_call(:next_server, _from, {[], _, _} = state) do
@@ -37,6 +37,10 @@ defmodule Adrestia.Balancer do
   def handle_cast(:status, state) do
     IO.inspect state
     {:noreply, state}
+  end
+
+  def handle_call(:endpoints, _from, {ups, downs, _} = state) do
+    {:reply, ups ++ downs, state}
   end
 
   defp as_set(list), do: list |> MapSet.new |> MapSet.to_list

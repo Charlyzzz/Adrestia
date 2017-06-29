@@ -22,7 +22,7 @@ defmodule Adrestia do
       Plug.Adapters.Cowboy.child_spec(:http, Adrestia.Endpoint, [], port: port)
     ]
 
-    :timer.apply_interval(check_time, Adrestia.ActiveCheck, :health_check, [endpoints])
+    :timer.apply_interval(check_time, Adrestia.ActiveCheck, :health_check, [])
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Adrestia.Supervisor)
   end
