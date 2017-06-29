@@ -29,6 +29,10 @@ defmodule Adrestia.Endpoint do
     {request, cache_get(request)}
   end
 
+  defp read_cache(request) do
+    {request, nil}
+  end
+
   defp read({request, nil}) do
     Request.send(request)
   end
