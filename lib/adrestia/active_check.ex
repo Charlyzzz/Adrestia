@@ -9,7 +9,7 @@ defmodule Adrestia.ActiveCheck do
   end
 
   defp server_status(%{:host => url}) do
-    case HTTPotion.get(url) do
+    case HTTPotion.head(url) do
         %HTTPotion.Response{} -> :server_up
         %HTTPotion.ErrorResponse{} -> :server_down
     end
