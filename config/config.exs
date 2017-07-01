@@ -29,5 +29,6 @@ use Mix.Config
 #     import_config "#{Mix.env}.exs"
 config :adrestia,
   port: 1234,
-  endpoints: [{"server1", "localhost:4567"}, {"server2", "localhost:5678"}],
-  cache_ttl: 1_000
+  endpoints: [%{ name: "server1", host: "localhost:4567", weight: 3}, %{name: "server2", host: "localhost:5678"}],
+  cache_ttl: 1_000,
+  strategy: Adrestia.Weight

@@ -29,6 +29,10 @@ defmodule Adrestia.Endpoint do
     {request, cache_get(request)}
   end
 
+  defp read_cache(request) do
+    {request, nil}
+  end
+
   defp read({request, nil}) do
     Request.send(request)
   end
@@ -50,7 +54,7 @@ defmodule Adrestia.Endpoint do
 
   defp write_cache(req), do: req
 
-  defp write(%Request{} = request) do 
+  defp write(%Request{} = request) do
     request.conn
       |> put_resp_headers(request.headers)
       |> send_resp(request.status_code, request.body)
@@ -58,26 +62,24 @@ defmodule Adrestia.Endpoint do
 
   defp write(conn), do: conn
 
-  defp report_server_down(server) do 
-    GenServer.cast(balance_strategy(), {:server_down, server})
+  defp report_server_down(server) do
+    GenServer.cast(Adrestia.Balancer, {:server_down, server})
   end
 
   defp put_resp_headers(conn, headers) do
-    reducer = fn({header_key, value}, connection) -> 
+    reducer = fn({header_key, value}, connection) ->
       put_resp_header(connection, header_key, value)
     end
     Enum.reduce(headers, conn, reducer)
   end
 
   defp server_address do
-    GenServer.call(balance_strategy(), :next_server)
+    GenServer.call(Adrestia.Balancer, :next_server)
   end
-
-  defp balance_strategy, do: Application.get_env(Adrestia.app(), :strategy, Adrestia.RoundRobin)
 
   defp cache_get(request) do
     if request.cacheable?, do: Cache.get(request)
-  end 
+  end
 
   defp cache_set(request) do
     if request.cacheable?, do: Cache.set(request)
