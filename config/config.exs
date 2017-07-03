@@ -1,34 +1,18 @@
 
 use Mix.Config
 
-# This configuration is loaded before any dependency and is restricted
-# to this project. If another project depends on this project, this
-# file won't be loaded nor affect the parent project. For this reason,
-# if you want to provide default values for your application for
-# 3rd-party users, it should be done in your "mix.exs" file.
-
-# You can configure for your application as:
-#
-#     config :adrestia, key: :value
-#
-# And access this configuration in your application as:
-#
-#     Application.get_env(:adrestia, :key)
-#
-# Or configure a 3rd-party app:
-#
-#     config :logger, level: :info
-#
-
-# It is also possible to import configuration files, relative to this
-# directory. For example, you can emulate configuration per environment
-# by uncommenting the line below and defining dev.exs, test.exs and such.
-# Configuration from the imported file will override the ones defined
-# here (which is why it is important to import them last).
-#
-#     import_config "#{Mix.env}.exs"
-config :adrestia,
-  port: 1234,
-  endpoints: [%{ name: "server1", host: "localhost:4567", weight: 3}, %{name: "server2", host: "localhost:5678"}],
+# Available parameters are
+# port: Balancer port. Default: 1234
+# endpoints: List of upstream servers.
+#   Available keys: 
+#     -name: Server name. Optional
+#     -host: Server address.
+#     -weight: Only works with Adrestia.Weight strategy. Default: 1
+#     Ej: [%{name: "Foo", host: "localhost:1234", weight: 5}, ....]
+# strategy: Load distribution strategy. One of Adrestia.RoundRobin, Adrestia.Weight, Adrestia.Random. Default: Adrestia.RoundRobin.module_info
+# cache_ttl: Cache duration in ms. If not specified it's off.
+# active_check_time: Servers heartbeath check time in seconds. Default: 3.
+config :adrestia, 
+  endpoints: [%{name: "server1", host: "localhost:4567", weight: 3}, %{name: "server2", host: "localhost:5678"}],
   cache_ttl: 1_000,
-  strategy: Adrestia.Weight
+  strategy: Adrestia.RoundRobin
