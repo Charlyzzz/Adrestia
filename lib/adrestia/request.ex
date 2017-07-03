@@ -32,7 +32,7 @@ defmodule Adrestia.Request do
 
   def send(request) do
     url = request.endpoint.host <> "/" <> request.path <> request.query_string
-    response = HTTPotion.request(request.verb, url)
+    response = HTTPotion.request(request.verb, url, ibrowse: [max_sessions: 100])
     put_response(request, response)
   end
 
