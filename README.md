@@ -34,3 +34,7 @@ Every `active_check_time` all endpoints are queried with a `HEAD` request, and r
 
 
 `Cowboy` <-- call --> `Endpoint` <-- server_address --> `Balancer` <-- server_up / server-down--> `ActiveCheck`
+
+## Supervision tree
+
+![Tree](https://user-images.githubusercontent.com/7073356/27807502-aa6ff940-6017-11e7-8b89-b23911b5a172.png)
