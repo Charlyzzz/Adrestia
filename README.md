@@ -23,9 +23,13 @@ Upon configuring all up (via _config.exs_), run `mix adrestia.balance`.
 
 A Plug-based Cowboy server handles all new connections, using `Endpoint` as a plug, which interacts with `Balancer`, asking for a server address to derive the request. 
 
-The main pipeline can be seen in `Endpoint`, line 18. The cacheability is determined upon entering the pipeline, which can skin cache related steps if neccesary. If there are no available servers, the request skips the pipeline and is dispatched with `service_unavailable` to the sender.
+The main pipeline can be seen in `Endpoint`, line 18. The cacheability is determined upon entering the pipeline, which can skin cache related steps if neccesary. 
 
-Every `active_check_time` all endpoints are queried with a `HEAD` request, and reported it's status to `Balancer`. Also the results are printed.`
+If there are no available servers, the request skips the pipeline and is dispatched with `service_unavailable` to the sender.
+
+Every `active_check_time` all endpoints are queried with a `HEAD` request, and reported it's status to `Balancer`. Also the results are printed.
+
+
 `ActiveCheck` is not an Actor and is handled by Erlang's `:timer` library.
 
 
