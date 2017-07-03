@@ -19,7 +19,7 @@ Spin up as many dummy servers as you like with `ruby test_server -p $PORT` and t
 
 Upon configuring all up (via _config.exs_), run `mix adrestia.balance`.
 
-##Actors
+## Actors
 
 A Plug-based Cowboy server handles all new connections, using `Endpoint` as a plug, which interacts with `Balancer`, asking for a server address to derive the request. 
 
