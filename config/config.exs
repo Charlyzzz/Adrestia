@@ -23,4 +23,5 @@ use Mix.Config
 
 config :adrestia,
   endpoints: [%{name: "server1", host: "localhost:4567", weight: 3}, %{name: "server2", host: "localhost:5678"}],
-  strategy: Adrestia.RoundRobin
+  strategy: Adrestia.RoundRobin,
+  active_check_time: 20

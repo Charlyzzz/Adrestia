@@ -33,7 +33,7 @@ defmodule Adrestia.Balancer do
   def handle_cast({:server_up, host}, {ups, downs, strategy}) do
     server = find_by_host(host, downs ++ ups)
     rest = List.delete(downs, server)
-    {:noreply, {as_set(ups ++ [server]), rest, strategy}}
+    {:noreply, {as_set([server | ups]), rest, strategy}}
   end
 
   def handle_cast(:status, state) do

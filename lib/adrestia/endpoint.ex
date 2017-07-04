@@ -42,7 +42,7 @@ defmodule Adrestia.Endpoint do
   end
 
   defp check(%{:response => %HTTPotion.ErrorResponse{}} = request) do
-    report_server_down(request.endpoint)
+    report_server_down(request.endpoint.host)
     pipeline(request, server_address())
   end
 
