@@ -1,8 +1,12 @@
 defmodule Adrestia do
   use Application
   @moduledoc """
-  Documentation for Adrestia.
-
+  Adrestia is composed with the following apps:
+    Plug
+    Cowboy
+    Cachex
+    ibrowse
+    HTTPotion
   """
 
   def start(:normal, _) do
