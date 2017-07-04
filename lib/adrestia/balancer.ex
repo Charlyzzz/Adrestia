@@ -24,16 +24,14 @@ defmodule Adrestia.Balancer do
     {:reply, server, {new_ups, downs, strategy}}
   end
 
-  def handle_call(:endpoints, _from, {ups, downs, _} = state) do
-    {:reply, ups ++ downs, state}
-  end
-
-  def handle_cast({:server_down, server}, {ups, downs, strategy}) do
+  def handle_cast({:server_down, host}, {ups, downs, strategy}) do
+    server = find_by_host(host, ups ++ downs)
     rest = List.delete(ups, server)
-    {:noreply, {rest, as_set([ server | downs]), strategy}}
+    {:noreply, {rest, as_set([server | downs]), strategy}}
   end
 
-  def handle_cast({:server_up, server}, {ups, downs, strategy}) do
+  def handle_cast({:server_up, host}, {ups, downs, strategy}) do
+    server = find_by_host(host, downs ++ ups)
     rest = List.delete(downs, server)
     {:noreply, {as_set(ups ++ [server]), rest, strategy}}
   end
@@ -41,6 +39,11 @@ defmodule Adrestia.Balancer do
   def handle_cast(:status, state) do
     IO.inspect state
     {:noreply, state}
+  end
+
+  defp find_by_host(host, endpoints) do
+    same_host = fn(%{:host => sv_host}) -> sv_host == host end
+    Enum.find(endpoints, same_host)
   end
 
   defp as_set(list), do: list |> MapSet.new |> MapSet.to_list
