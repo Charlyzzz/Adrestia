@@ -21,7 +21,6 @@ use Mix.Config
 # active_check_time: Servers heartbeath check time in seconds. Default: 3.
 #
 
-config :adrestia, 
+config :adrestia,
   endpoints: [%{name: "server1", host: "localhost:4567", weight: 3}, %{name: "server2", host: "localhost:5678"}],
-  cache_ttl: 1_000,
   strategy: Adrestia.RoundRobin
